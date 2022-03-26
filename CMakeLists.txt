@@ -1,5 +1,6 @@
 project(dxpy CXX)
 cmake_minimum_required(VERSION 3.10)
+cmake_policy(SET CMP0007 NEW)
 set(CMAKE_CXX_STANDARD 17) 
 set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 
@@ -22,10 +23,18 @@ find_library(libdxc dxcompiler HINTS ${DIRECTX_SHADER_COMPILER}/lib ${DIRECTX_SH
 list(APPEND dx_dep_libs ${libdxc})
 
 # Looking for DirectXHeaders
-find_package(directx-headers CONFIG REQUIRED)
+set(DIRECTX_HEADERS "thirdparty/DirectX-Headers/")
+include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/${DIRECTX_HEADERS}/include)
+
+# add pybind11
+add_subdirectory(thirdparty/pybind11)
 
 # Create dxruntime library
-file(GLOB DXRUNTIME runtime/*.cc)
-add_library(dxpy_runtime SHARED ${DXRUNTIME})
-target_link_libraries(dxpy_runtime PRIVATE Microsoft::DirectX-Headers ${dx_dep_libs})
-target_include_directories(dxpy_runtime PRIVATE ${DIRECTX_SHADER_COMPILER}/include)
+#file(GLOB DXRUNTIME runtime/*.cc)
+#add_library(dxpy_runtime SHARED ${DXRUNTIME})
+#target_link_libraries(dxpy_runtime PRIVATE ${dx_dep_libs})
+#target_include_directories(dxpy_runtime PRIVATE ${DIRECTX_SHADER_COMPILER}/include ${DIRECTX_HEADERS}/include)
+
+file(GLOB DXBIND pybind/*.cc)
+pybind11_add_module(dxpy_pybind ${DXBIND})
