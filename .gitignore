@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+
+# Folder
+thirdparty/
+build/
+install/
