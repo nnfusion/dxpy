@@ -22,19 +22,20 @@ endif()
 find_library(libdxc dxcompiler HINTS ${DIRECTX_SHADER_COMPILER}/lib ${DIRECTX_SHADER_COMPILER}/bin)
 list(APPEND dx_dep_libs ${libdxc})
 
-# Looking for DirectXHeaders
 set(DIRECTX_HEADERS "thirdparty/DirectX-Headers/")
+
 include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/${DIRECTX_SHADER_COMPILER}/include)
 include_directories(${CMAKE_SOURCE_DIR}/${DIRECTX_HEADERS}/include)
+include_directories(${CMAKE_SOURCE_DIR}/${DIRECTX_HEADERS}/include/wsl/stubs)
 
 # add pybind11
 add_subdirectory(thirdparty/pybind11)
 
 # Create dxruntime library
-#file(GLOB DXRUNTIME runtime/*.cc)
-#add_library(dxpy_runtime SHARED ${DXRUNTIME})
-#target_link_libraries(dxpy_runtime PRIVATE ${dx_dep_libs})
-#target_include_directories(dxpy_runtime PRIVATE ${DIRECTX_SHADER_COMPILER}/include ${DIRECTX_HEADERS}/include)
+file(GLOB DXRUNTIME runtime/*.cc)
+add_library(dxpy_runtime SHARED ${DXRUNTIME})
+target_link_libraries(dxpy_runtime PRIVATE ${dx_dep_libs})
 
 file(GLOB DXBIND pybind/*.cc)
-pybind11_add_module(dxpy_pybind ${DXBIND})
+pybind11_add_module(pybind ${DXBIND})
