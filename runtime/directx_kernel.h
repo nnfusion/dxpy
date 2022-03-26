@@ -1,5 +1,4 @@
 #pragma once
-#include "../meta_data.h"
 #include "directx_header.h"
 
 namespace tvm {
@@ -35,7 +34,6 @@ class DirectComputeKernel {
  public:
   DirectComputeKernel() {}
   DirectComputeKernel(const std::string& src);
-  void set_function_info(FunctionInfo func_info) { _func_info = func_info; }
   void validate_and_sync_buffer(std::vector<std::shared_ptr<DirectBuffer>>& _buf);
   const std::unordered_map<std::string, FunctionDescriptor>& get_function_descriptors() {
     return this->_func_descs;
@@ -85,7 +83,6 @@ class DirectComputeKernel {
   // Some common data
  private:
   friend class DirectXDevice;
-  FunctionInfo _func_info;
   std::string _entry_function;
   std::string _comment;
   std::string _hlsl_source;

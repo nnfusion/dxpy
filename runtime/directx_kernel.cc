@@ -182,11 +182,11 @@ void DirectComputeKernel::binding_buffers(DirectXDevice* _dxdev, ComPtr<ID3D12De
         viewDesc.Format = DXGI_FORMAT_UNKNOWN;
       } else if (bindPoint.viewType == BufferViewType::Raw) {
         viewDesc.Format = DXGI_FORMAT_R32_TYPELESS;
-        if constexpr (std::is_same<decltype(viewDesc), D3D12_UNORDERED_ACCESS_VIEW_DESC&>::value) {
-          viewDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_RAW;
+        if (std::is_same<decltype(viewDesc), D3D12_UNORDERED_ACCESS_VIEW_DESC&>::value) {
+          // viewDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_RAW;
         }
-        if constexpr (std::is_same<decltype(viewDesc), D3D12_SHADER_RESOURCE_VIEW_DESC&>::value) {
-          viewDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_RAW;
+        if (std::is_same<decltype(viewDesc), D3D12_SHADER_RESOURCE_VIEW_DESC&>::value) {
+          // viewDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_RAW;
         }
       }
     };
@@ -230,7 +230,7 @@ void DirectComputeKernel::device_dispatch(DirectXDevice* _dxdev,
                                           std::string _func_name, std::vector<uint32_t> block,
                                           std::vector<uint32_t> thread, bool async) {
   // One: Get dxil kernel along with irregular cases
-  if (_func_name.empty()) _func_name = this->_func_info.name;
+  if (_func_name.empty()) _func_name = "CSMain";
   if (_dxdev == nullptr)
     throw std::invalid_argument(_msg_("DirectX kernel launch failed: Invalid DirectX device;"));
   if (_func_descs.find(_func_name) == _func_descs.end()) {

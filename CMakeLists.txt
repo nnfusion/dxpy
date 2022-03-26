@@ -1,7 +1,9 @@
 project(dxpy CXX)
 cmake_minimum_required(VERSION 3.10)
+set(CMAKE_CXX_STANDARD 17) 
+set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 
-# Looking for wsl dx libs
+# Looking for system wsl dx libs
 list(APPEND dx_dep_libs "")
 if(EXISTS "/dev/dxg")
   find_library(libd3d12 d3d12 HINTS /lib/wsl/lib)
@@ -11,18 +13,19 @@ if(EXISTS "/dev/dxg")
 endif()
 
 # Looking for dxcompiler
-set(DIRECTX_SHADER_COMPILER "thirdparty/")
+set(DIRECTX_SHADER_COMPILER "thirdparty/DirectXShaderCompiler")
 set(DIRECTX_SHADER_COMPILER_TAR_GZ "${CMAKE_SOURCE_DIR}/thirdparty/DirectXShaderCompiler/DirectXShaderCompiler.x64.linux.tar.gz")
 if(NOT EXISTS "${CMAKE_SOURCE_DIR}/thirdparty/DirectXShaderCompiler/lib/libdxcompiler.so")
-  execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvzf "${DIRECTX_SHADER_COMPILER_TAR_GZ}" WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/${DIRECTX_SHADER_COMPILER}")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvzf "${DIRECTX_SHADER_COMPILER_TAR_GZ}" WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/thirdparty")
 endif()
-
 find_library(libdxc dxcompiler HINTS ${DIRECTX_SHADER_COMPILER}/lib ${DIRECTX_SHADER_COMPILER}/bin)
-include_directories(${DIRECTX_SHADER_COMPILER}/include)
 list(APPEND dx_dep_libs ${libdxc})
 
+# Looking for DirectXHeaders
+find_package(directx-headers CONFIG REQUIRED)
+
 # Create dxruntime library
-#file(GLOB DXRUNTIME runtime/*.cc)
-#add_library(librt ${DXRUNTIME})
-#target_link_libraries(librt PRIVATE Microsoft::DirectX-Headers ${dx_dep_libs})
-#target_include_directories(librt PRIVATE ${DIRECTX_SHADER_COMPILER}/include)
+file(GLOB DXRUNTIME runtime/*.cc)
+add_library(dxpy_runtime SHARED ${DXRUNTIME})
+target_link_libraries(dxpy_runtime PRIVATE Microsoft::DirectX-Headers ${dx_dep_libs})
+target_include_directories(dxpy_runtime PRIVATE ${DIRECTX_SHADER_COMPILER}/include)

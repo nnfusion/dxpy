@@ -11,10 +11,6 @@
 #include <regex>
 #include <type_traits>
 
-// Thirdparty
-#include "dlpack/dlpack.h"
-#include "dmlc/json.h"
-// Adapter for non-windows
 #ifndef _WIN32
 #include "wsl/winadapter.h"
 #endif
@@ -235,6 +231,95 @@ DECLARE_INTERFACE_(ID3D12ShaderReflection, IUnknown)
 }  // namespace dx
 }  // namespace runtime
 }  // namespace tvm
+
+typedef enum {
+  /*! \brief CPU device */
+  kDLCPU = 1,
+  /*! \brief CUDA GPU device */
+  kDLCUDA = 2,
+  /*!
+   * \brief Pinned CUDA CPU memory by cudaMallocHost
+   */
+  kDLCUDAHost = 3,
+  /*! \brief OpenCL devices. */
+  kDLOpenCL = 4,
+  /*! \brief Vulkan buffer for next generation graphics. */
+  kDLVulkan = 7,
+  /*! \brief Metal for Apple GPU. */
+  kDLMetal = 8,
+  /*! \brief Verilog simulator buffer */
+  kDLVPI = 9,
+  /*! \brief ROCm GPUs for AMD GPUs */
+  kDLROCM = 10,
+  /*!
+   * \brief Reserved extension device type,
+   * used for quickly test extension device
+   * The semantics can differ depending on the implementation.
+   */
+  kDLExtDev = 12,
+} DLDeviceType;
+
+/*!
+ * \brief A Device for Tensor and operator.
+ */
+typedef struct {
+  /*! \brief The device type used in the device. */
+  DLDeviceType device_type;
+  /*! \brief The device index */
+  int device_id;
+} DLDevice;
+
+/*!
+ * \brief The type code options DLDataType.
+ */
+typedef enum {
+  /*! \brief signed integer */
+  kDLInt = 0U,
+  /*! \brief unsigned integer */
+  kDLUInt = 1U,
+  /*! \brief IEEE floating point */
+  kDLFloat = 2U,
+  /*!
+   * \brief Opaque handle type, reserved for testing purposes.
+   * Frameworks need to agree on the handle data type for the exchange to be well-defined.
+   */
+  kDLOpaqueHandle = 3U,
+  /*! \brief bfloat16 */
+  kDLBfloat = 4U,
+  /*!
+   * \brief complex number
+   * (C/C++/Python layout: compact struct per complex number)
+   */
+  kDLComplex = 5U,
+} DLDataTypeCode;
+
+/*!
+ * \brief The data type the tensor can hold.
+ *
+ *  Examples
+ *   - float: type_code = 2, bits = 32, lanes=1
+ *   - float4(vectorized 4 float): type_code = 2, bits = 32, lanes=4
+ *   - int8: type_code = 0, bits = 8, lanes=1
+ *   - std::complex<float>: type_code = 5, bits = 64, lanes = 1
+ */
+typedef struct {
+  /*!
+   * \brief Type code of base types.
+   * We keep it uint8_t instead of DLDataTypeCode for minimal memory
+   * footprint, but the value should be one of DLDataTypeCode enum values.
+   * */
+  uint8_t code;
+  /*!
+   * \brief Number of bits, common choices are 8, 16, 32.
+   */
+  uint8_t bits;
+  /*! \brief Number of lanes in the type, used for vector types. */
+  uint16_t lanes;
+} DLDataType;
+
+#define LOG(level) LOG_##level
+#define LOG_INFO std::cout
+#define LOG_ERROR std::cout
 
 #include "directx_buffer.h"
 #include "directx_context.h"
