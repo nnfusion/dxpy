@@ -33,9 +33,10 @@ include_directories(${CMAKE_SOURCE_DIR}/${DIRECTX_HEADERS}/include/wsl/stubs)
 add_subdirectory(thirdparty/pybind11)
 
 # Create dxruntime library
-file(GLOB DXRUNTIME runtime/*.cc)
+file(GLOB DXRUNTIME src/runtime/*.cc)
 add_library(dxpy_runtime SHARED ${DXRUNTIME})
 target_link_libraries(dxpy_runtime PRIVATE ${dx_dep_libs})
 
-file(GLOB DXBIND pybind/*.cc)
+file(GLOB DXBIND src/pybind/*.cc)
 pybind11_add_module(pybind ${DXBIND})
+target_link_libraries(pybind PRIVATE ${dx_dep_libs} dxpy_runtime)
