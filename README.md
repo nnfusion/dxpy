@@ -5,7 +5,7 @@ git clone --recursive https://github.com/wenxcs/dxpy.git dxpy
 python dxpy --opeator-name=TensorAdd --nnfusion-home=<path-to-nnfusion-repo>/src/contrib
 ```
 ## Source code comment
-src/runtime : Native DirectX Runtime to 1. Compile HLSL into DXIL kernel; 2. Launch DXIL kernel throught /dev/dxg;   
+src/runtime : Native DirectX Runtime to 1. Compile HLSL into DXIL kernel; 2. Launch DXIL kernel through /dev/dxg;   
 src/pybind : Source code for binding above runtime with Python module;   
 \_\_main\_\_.py : 1. Compile above native code if necessary; 2. Invoke script in NNFUSION_HOME/src/contrib/script to get operator's test cases and kernels; 3. Check kernel correctness;   
 
