@@ -1,6 +1,6 @@
 #!python
 from __build__ import prepare_env
-prepare_env(True)
+prepare_env()
 
 # import deps
 import os, sys, json
@@ -62,7 +62,7 @@ if __name__ == "__main__":
             output_host_alloc_list.append(host_)
             output_dev_alloc_list.append(dev_)
 
-        pybind.dispatch(k, dev_alloc_list, "CSMain", launch_config)
+        pybind.dispatch(k, dev_alloc_list, test_case["kernel"]["entry_point"], launch_config)
 
         for i in range(0, len(test_case["output"])):
             array_ = test_case["output"][i]

@@ -74,12 +74,12 @@ void dxc_compile(const std::string& src, std::string entry_point, std::string pr
   pResults->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&pErrors), nullptr);
   // This will have all message
   // if (pErrors != nullptr && pErrors->GetStringLength() != 0)
-  //   wprintf(L"Warnings and Errors:\n%S\n", pErrors->GetStringPointer());
+  //    wprintf(L"Warnings and Errors:\n%S\n", pErrors->GetStringPointer());
 
   // Check if failed
   HRESULT hrStatus;
   pResults->GetStatus(&hrStatus);
-  if (FAILED(hrStatus)) throw std::runtime_error("Compilation Failed\n");
+  if (FAILED(hrStatus)) throw std::runtime_error(pErrors->GetStringPointer());
 
   // Retrieve shader
   pResults->GetOutput(DXC_OUT_OBJECT, __uuidof(IDxcBlob), pshader, nullptr);
