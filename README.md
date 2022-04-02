@@ -1,8 +1,10 @@
 # dxpy : DirectX Python Runtime
 dxpy is a simple runtime to test your DirectX kernel in WSL.    
 ```shell
-git clone --recursive https://github.com/wenxcs/dxpy.git dxpy
-python dxpy --opeator-name=TensorAdd --nnfusion-home=<path-to-nnfusion-repo>/src/contrib
+git clone --recursive https://github.com/wenxcs/dxpy.git
+pip install -r dxpy/requirements.txt
+git clone git@github.com:microsoft/nnfusion.git
+python dxpy --operator-name=TopK --nnfusion-home=nnfusion/src/contrib
 ```
 ## Source code comment
 src/runtime : Native DirectX Runtime to 1. Compile HLSL into DXIL kernel; 2. Launch DXIL kernel through /dev/dxg;   
