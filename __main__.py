@@ -32,9 +32,11 @@ if __name__ == "__main__":
     handle = loader.load_module("__operator__")
     test_cases = handle.get_operator_tests(args.operator_name)
     no_error_flag = True
+    pybind.init()
     for test_case in test_cases:
+        if "kernel" not in test_case:
+            continue
         logging.info("Test case:{0}, Kernel code len:{1}, input:{2}, output:{3}".format(test_case["test"], len(test_case["kernel"]["hlsl_kernel"]), test_case["kernel"]["input"], test_case["kernel"]["output"]))
-        pybind.init()
         k = pybind.add_kernel(test_case["kernel"]["hlsl_kernel"])
         host_alloc_list = []
         dev_alloc_list = []
@@ -64,6 +66,7 @@ if __name__ == "__main__":
 
         pybind.dispatch(k, dev_alloc_list, test_case["kernel"]["entry_point"], launch_config)
 
+        output_array = []
         for i in range(0, len(test_case["output"])):
             array_ = test_case["output"][i]
             bytes_ = array_.itemsize
@@ -73,15 +76,16 @@ if __name__ == "__main__":
             dev_ = output_dev_alloc_list[i]
             pybind.copy(host_, dev_)
             pybind.copy_host_buffer_to(t.ctypes.data, bytes_ * nums_, host_)
+            output_array.append(t)
 
-            if not np.allclose(array_, t):
-                logging.error("numpy.allclose failed at output {0}. {1} vs {2}".format(i, array_, t))
-                no_error_flag = False
+        no_error_flag = test_case["allclose"](test_case["output"], output_array)
 
         for id in host_alloc_list:
             pybind.release_buffer(id)
         for id in dev_alloc_list:
             pybind.release_buffer(id)
 
-    if no_error_flag:
-        logging.info("No error for test case: {0}".format(test_case["test"]))
+        if no_error_flag:
+            logging.info("No error for test case: {0}".format(test_case["test"]))
+    
+    logging.info("Press CTRL+C to exit if program hang.")
