@@ -35,3 +35,4 @@
 thirdparty/
 build/
 install/
+__pycache__/

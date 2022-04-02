@@ -99,7 +99,7 @@ class DirectComputeKernel {
   // todo(wenxh): Support DXIL&DXC later;
   void dxc_compile(ComPtr<dxc::IDxcBlob>& entry_blob,
                    ComPtr<dxc::ID3D12ShaderReflection>& reflection_blob, const std::string& src,
-                   std::string entry_point, std::string profile = "cs_6_0");
+                   std::string entry_point, std::string profile = "cs_6_2");
 };
 
 }  // namespace dx

@@ -54,7 +54,7 @@ void dxc_compile(const std::string& src, std::string entry_point, std::string pr
   pUtils->CreateDefaultIncludeHandler(&pIncludeHandler);
 
   LPCWSTR pszArgs[] = {
-      w_file_name.c_str(), L"-E", w_entry_point.c_str(), L"-T", w_profile.c_str(),
+      w_file_name.c_str(), L"-E", w_entry_point.c_str(), L"-T", w_profile.c_str(), L"-enable-16bit-types"
   };
 
   // Load source code
