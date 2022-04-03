@@ -1,4 +1,4 @@
-# dxpy : DirectX Python Runtime
+# dxpy : Native WSL DirectX Python Runtime
 dxpy is a simple runtime to test your DirectX kernel in WSL.    
 ```shell
 git clone --recursive https://github.com/wenxcs/dxpy.git
